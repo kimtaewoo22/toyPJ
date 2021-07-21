@@ -1,9 +1,17 @@
 package com.example.lol.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.lol.service.LolService;
 import com.example.lol.vo.SummonerDTO;
@@ -27,20 +35,6 @@ public class LolController {
 
 		return "main";
 	}
-	
-	/**
-	 * 
-	 * @return Summoner 정보 전달
-	 * @throws Exception
-	 */
-	@RequestMapping(value="/lol")
-	public SummonerDTO lol() throws Exception{
-		String gameName ="볶음밥쟁이";
-		SummonerDTO summonerDTO = lolInfo(gameName);
-		
-		return summonerDTO;
-	}
-	
 	/**
 	 * 
 	 * @param gameName
@@ -63,12 +57,18 @@ public class LolController {
 		return summonerDTO;
 	}
 	
+	@ResponseBody
 	@RequestMapping(value="/leagueInfo")
-	public void leagueInfo() throws Exception{
-		SummonerDTO summonerDTO = lol();
+	public Object leagueInfo(@RequestParam(value="gameName", required = true) String gameName, HttpServletRequest request) throws Exception{
+		SummonerDTO summonerDTO = lolInfo(gameName);
 		String id = summonerDTO.getId();
 		String apiUrl =  "https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/"+id+"?api_key="+lolApiKey;
 		String result = lolService.lolInfo(apiUrl).toString();
 		System.out.println("reuslt 111111>>>>" + result);
+		
+		JSONParser jsonParse = new JSONParser(result);
+		Object object = jsonParse.parse();
+		
+		return object;
 	}
 }
