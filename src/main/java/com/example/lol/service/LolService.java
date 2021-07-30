@@ -1,6 +1,7 @@
 package com.example.lol.service;
 
 import org.apache.tomcat.util.json.JSONParser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -9,6 +10,40 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class LolService {
+	
+	@Value("${lolApiKey}")
+	String lolApiKey;
+	
+	/**
+	 * lol 기본정보
+	 * @param gameName
+	 * @return summonerDTO
+	 * @throws Exception
+	 */
+	public SummonerDTO lolInfo(String gameName) throws Exception{
+		String apiUrl = "https://kr.api.riotgames.com/tft/summoner/v1/summoners/by-name/"+gameName+"?api_key="+lolApiKey;
+		String result = restTemple(apiUrl);
+		SummonerDTO summonerDTO = summonerDtoReadValue(result);
+		
+		return summonerDTO;
+	}
+	
+	/**
+	 * 전적 조회
+	 * @param gameName
+	 * @return 
+	 * @throws Exception
+	 */
+	public Object leagueInfo(String gameName) throws Exception{
+		SummonerDTO summonerDTO = lolInfo(gameName);
+		
+		String id = summonerDTO.getId();
+		String apiUrl =  "https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/"+id+"?api_key="+lolApiKey;
+		String result = restTemple(apiUrl);
+		Object object = jsonPaser(result);
+		
+		return object;
+	}
 	
 	/**
 	 * API 호출
