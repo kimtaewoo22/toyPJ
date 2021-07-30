@@ -49,7 +49,7 @@ public class LolController {
 		SummonerDTO summonerDTO = new SummonerDTO();
 
 		String apiUrl = "https://kr.api.riotgames.com/tft/summoner/v1/summoners/by-name/"+gameName+"?api_key="+lolApiKey;
-		String result = lolService.lolInfo(apiUrl).toString();
+		String result = lolService.restTemple(apiUrl);
 		System.out.println("reuslt 111111>>>>" + result);
 		summonerDTO = objectMapper.readValue(result, SummonerDTO.class);
 		System.out.println("reuslt >>>>" + summonerDTO);
@@ -63,7 +63,7 @@ public class LolController {
 		SummonerDTO summonerDTO = lolInfo(gameName);
 		String id = summonerDTO.getId();
 		String apiUrl =  "https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/"+id+"?api_key="+lolApiKey;
-		String result = lolService.lolInfo(apiUrl).toString();
+		String result = lolService.restTemple(apiUrl);
 		System.out.println("reuslt 111111>>>>" + result);
 		
 		JSONParser jsonParse = new JSONParser(result);
